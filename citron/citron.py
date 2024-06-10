@@ -8,12 +8,6 @@ This module provides the primary functions of the Citron quote extraction
 and attribution system and a web server supporting a REST API.
 """
 
-import atexit
-import json
-import os
-
-import cherrypy
-
 from .data import Quote
 from .cue import CueClassifier
 from .content import ContentClassifier
@@ -26,27 +20,26 @@ from . import metrics
 from .logger import logger
 
 APPLICATION_NAME = "citron-extractor"
-
+DESIRED_LABELS = {"GPE", "PERSON", "NORP", "ORG"}
 
 class Citron():
     """
     Class providing methods to extract quotes from documents.
     """
-    
+
     def __init__(self, model_path, nlp=None):
         """
         Constructor.
-        
+
         Args:
             model_path: The path (string) to the Citron model directory.
             nlp: A spaCy Language object, or None.
         """
-        
         if nlp is None:
             self.nlp = utils.get_parser()
         else:
             self.nlp = nlp
-        
+
         logger.info("Loading Citron model: %s", model_path)
         self.cue_classifier = CueClassifier(model_path)
         self.content_classifier = ContentClassifier(model_path)
@@ -54,13 +47,13 @@ class Citron():
         self.content_resolver = ContentResolver(model_path)
         self.source_resolver = SourceResolver(model_path)
         self.coreference_resolver = CoreferenceResolver(model_path)
-        
+
         self.source = {
             "application": APPLICATION_NAME,
             "model:": self.cue_classifier.model["timestamp"] 
         }
-    
-    
+
+
     def extract(self, text, resolve_coreferences=True):
         """
         Extract quotes from the supplied text.
@@ -74,14 +67,44 @@ class Citron():
         """
         
         doc = self.nlp(text)
+        
         quotes = self.get_quotes(doc, resolve_coreferences)
         quotes_json = []
         
         for quote in quotes:
             quotes_json.append(quote.to_json())
+
+        entities = self.get_entities(doc)
         
-        return { "quotes": quotes_json, "source": self.source }
+        return { 
+            "quotes": quotes_json, 
+            "source": self.source,
+            "entities": entities,
+         }
     
+    def get_entities(self, doc):
+        seen = {}
+        results = []
+        for ee in doc.ents:
+            entityName = ee.text.strip()
+            if ee.label_ in DESIRED_LABELS and entityName not in seen:
+                should_add = True
+                for text in seen.keys():
+                    # If this is a substring, skip it
+                    if entityName in text:
+                        should_add = False
+                        break
+                seen[entityName] = True
+
+                if should_add:
+                    result_entity = { 
+                            "Label": ee.label_,
+                            "Text": entityName,
+                            "Start": ee.start,
+                            }   
+                    results.append(result_entity)
+
+        return results
     
     def get_quotes(self, doc, resolve_coreferences=True):
         """
@@ -147,85 +170,3 @@ class Citron():
         """
         
         metrics.evaluate(self, test_path)
-
-
-class CitronWeb():
-    """
-    Class providing a web server which supports a REST API and a demonstration.
-    """
-    
-    def __init__(self, citron):
-        """
-        Constructor.
-        
-        Args:
-            citron: a citron.citron.Citron object.
-        """
-        
-        logger.info("Initialising Citron API...")
-        self._citron = citron
-    
-    
-    def start(self, port, logfile=None):
-        """
-        Start the web server.
-        
-        Args:
-            port: the server port number (integer)
-            logfile: The path (string) to the log file, or None.
-        """
-        
-        cherrypy.engine.autoreload.unsubscribe()
-        
-        options = {
-          "server.socket_host": "0.0.0.0",
-          "server.socket_port": port
-        }
-        
-        if not logfile:
-            log_options = { "log.screen": True }
-        else:
-            log_options = { "log.screen": False, "log.access_file": logfile, "log.error_file": logfile }
-        
-        options.update(log_options)
-        cherrypy.config.update(options)
-        
-        if cherrypy.__version__.startswith("3.0") and cherrypy.engine.state == 0:
-            cherrypy.engine.start(blocking=False)
-            atexit.register(cherrypy.engine.stop)
-        
-        config = {
-            "/": {
-                "request.query_string_encoding": "utf-8",
-                "tools.staticdir.on": True,
-                "tools.staticdir.dir": os.path.abspath(os.path.join(os.path.dirname(__file__), "public")),
-                "tools.staticdir.index": "index.html"
-            },
-        }
-        cherrypy.quickstart(self, "/", config = config)
-        
-    
-    @cherrypy.expose
-    def quotes(self, text=None):
-        """
-        The quote method end point.
-        
-        Args:
-            text: the text (string) from which to extract quotes.
-        """
-        
-        if text is None:
-            cherrypy.response.headers["Content-Type"] = "application/json"
-            cherrypy.response.status = 400
-            return json.dumps({"error": "A text parameter must be provided."}).encode("utf8")
-        
-        try:
-            results = self._citron.extract(text)
-        
-        except ValueError as err:
-            cherrypy.response.headers["Content-Type"] = "application/json"
-            cherrypy.response.status = 500
-            return json.dumps({ "error": err.message }).encode("utf8")
-        
-        cherrypy.response.headers["Content-Type"] = "application/json; charset=utf-8"
-        return json.dumps(results, ensure_ascii=False).encode("utf8")

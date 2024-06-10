@@ -1,6 +1,5 @@
-spacy~=3.2
-scikit-learn~=1.0.1
-python-crfsuite==0.9.7
+spacy
+scikit-learn
+python-crfsuite
 tkreadonly
-cherrypy
 nltk

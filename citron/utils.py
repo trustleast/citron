@@ -15,18 +15,26 @@ from spacy.tokens import Span
 from .logger import logger
 
 
-def get_parser():
+def get_parser(use_gpu = None, use_small = None):
     """
     Loads a spaCy pipeline and adds extension functions.
-    
+
     Returns:
         A spaCy Language object.
     """
-    
-    logger.info("Loading spacy model")
-    nlp = spacy.load("en_core_web_sm")
+
+    model = "en_core_web_trf"
+    if use_small:
+        model = "en_core_web_sm"
+    if use_gpu:
+        logger.info("Requiring GPU")
+        spacy.require_gpu()
+
+    logger.info("Loading spacy model: %s", model)
+    nlp = spacy.load(model)
+
     to_json = lambda span: {"start": span.start, "end": span.end, "text": span.text}
-    
+
     Span.set_extension("to_json", method=to_json)
     Span.set_extension("probability", default=None, force=True)
     Span.set_extension("is_plural",   default=None, force=True)
