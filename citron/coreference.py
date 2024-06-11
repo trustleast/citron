@@ -255,8 +255,7 @@ def get_gender(name, forenames_table, coreference_table=None):
     
     Returns:
         "male", "female", "neutral" or "unknown".
-    """
-    
+    """ 
     if is_pronoun(name):
         return get_pronoun_gender(name)
     
@@ -287,6 +286,13 @@ def get_gender(name, forenames_table, coreference_table=None):
     else:
         return "unknown"
 
+PRONOUN_GENDERS = {
+    "he": "male",
+    "she": "female",
+    "it": "neutral",
+    "they": "neutral",
+    "we": "neutral",
+}
 
 def get_pronoun_gender(pronoun):
     """
@@ -297,27 +303,11 @@ def get_pronoun_gender(pronoun):
     
     Returns:
         "male", "female", "neutral" or "unknown".
-    """
-    
+    """   
     text = pronoun.text.lower()
-    
-    if text == "he":
-        return "male"
-    
-    elif text == "she":   
-        return "female"
-    
-    elif text == "it":
-        return "neutral"
-    
-    elif text == "they":
-        return "neutral"
-    
-    elif text == "we":
-        return "neutral"
-    
-    else:
-        return "unknown"
+    if text in PRONOUN_GENDERS:
+        return PRONOUN_GENDERS[text]
+    return "unknown"
 
 def split_on_longest_prefix(name):
     """
@@ -358,8 +348,7 @@ def get_prefix_gender(prefix):
 
 def is_proper_noun(span):
     """
-    Check whether the span is a proper noun.
-    
+    Check whether the span is a proper noun. 
     """
     for token in span:
         if token.pos_ != "PROPN":
@@ -520,6 +509,8 @@ class CoreferenceResolver():
             content_labels: A list containing an IOB label for each token in the document.
         """
         coreference_table = CoreferenceTable(doc, CoreferenceResolver.forenames_table, quotes, content_labels)
+
+        logger.debug("Resolve document: %s", contents)
         
         for quote in quotes:
             self._resolve_quote(doc, coreference_table, quote, sources, contents)
@@ -629,7 +620,7 @@ class CoreferenceResolver():
         for mention_index, mention in enumerate(candidate_mentions):
             candidate_features = self._get_features(coreference_table, mention, mention_index, pronoun)
             features.append(candidate_features)
-        
+
         test_vectors = self._model["vectorizer"].transform(features)
         predicted_probabilities = self._model["classifier"].predict_proba(test_vectors)
         predicted_index, probability = utils.get_index_of_max(predicted_probabilities)
@@ -1029,6 +1020,7 @@ class CoreferenceTable():
             
         """
         preceding_mentions = []
+        pronoun_is_gendered = pronoun._.gender not in {"unknown", "neutral"}
         for i in range(len(self.mentions) - 1, -1, -1):
             candidate_mention = self.mentions[i]
             
@@ -1041,8 +1033,11 @@ class CoreferenceTable():
                 logger.debug("Overlapping span: %s", candidate_mention)
                 continue
 
+            # If candidate is a proper noun, and gender is unknown, include it
             # Ignore gender mismatches
-            if pronoun._.gender not in {"unknown", "neutral"} and candidate_mention._.gender != pronoun._.gender:
+            mention_matches_gender = candidate_mention._.gender == pronoun._.gender
+            mention_is_noun_or_proper = is_proper_noun(candidate_mention) or is_noun(candidate_mention)
+            if (pronoun_is_gendered and not mention_matches_gender) and not (mention_is_noun_or_proper and candidate_mention._.gender == "unknown"):
                 logger.debug("Bad gender match: %s", candidate_mention)
                 continue
                 

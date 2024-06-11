@@ -4,6 +4,7 @@
 # License: Apache-2.0
 
 import logging
+import os
 
 from citron.utils import get_parser
 from citron.citron import Citron
@@ -12,7 +13,8 @@ from citron.logger import logger
 from typing_extensions import Annotated
 from fastapi import FastAPI, Form, Response, status
 
-#logger.setLevel(logging.DEBUG)
+if os.getenv("DEBUG") is not None:
+    logger.setLevel(logging.DEBUG)
 
 nlp = get_parser(use_gpu = True, use_small = False)
 citron = Citron("./models/en_2021-11-15", nlp=nlp)
