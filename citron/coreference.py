@@ -326,15 +326,15 @@ def split_on_longest_prefix(name):
     Args:
         name: a spaCy Span object.
     """
-    text = name.text.lower()
+    lowered = name.text.lower()
     for key in PREFIX_GENDERS.keys():
-        if text.startswith(key.lower()):
-            prefix_removed = text[len(key):].strip()
+        if lowered.startswith(key.lower()):
+            prefix_removed = name.text[len(key):].strip()
             if prefix_removed.startswith("."):
                 prefix_removed = prefix_removed[1:]
             return key, prefix_removed.strip()
 
-    return None, text
+    return None, name.text
 
 def get_prefix_gender(prefix):
     """
@@ -532,11 +532,12 @@ class CoreferenceResolver():
         Args:
             doc: A spaCy Doc object.
             coreference_table: A citron.coreference.CoreferenceTable object.
-            quote: A spaCy Span object (the quote to resolve).
+            quote: A citron.Data.Quote object (the quote to resolve).
             sources: A list of spaCy Span objects.
             contents: A list of spaCy Span objects.
         """
         coreferences = []
+        logger.debug("Resolve quote: %s: %s", quote.contents, quote.sources)
         for source in quote.sources:
             coreference = self._resolve_coreference_chain(doc, coreference_table, source, sources, contents)
             
@@ -590,11 +591,10 @@ class CoreferenceResolver():
         
         elif is_pronoun(span):
             chain.append(span)
-            coreference = self._resolve_pronoun(doc, coreference_table, span, sources, contents)
+            coreference = self._resolve_pronoun(coreference_table, span, sources, contents)
             
             if coreference is None:
-                return span
-            
+                return span      
             else:
                 return self._resolve_coreference(doc, coreference_table, coreference, chain, sources, contents)
         
@@ -602,7 +602,7 @@ class CoreferenceResolver():
             return span
     
     
-    def _resolve_pronoun(self, doc, coreference_table, pronoun, sources, contents):
+    def _resolve_pronoun(self, coreference_table, pronoun, sources, contents):
         """
         Find the coreference for a pronoun.
         
@@ -619,6 +619,7 @@ class CoreferenceResolver():
         """
         
         candidate_mentions = coreference_table.get_closest_preceding_mentions(pronoun, self.PREVIOUS_N, sources, contents)
+        logger.debug("Candidate mentions: %s, %s", candidate_mentions, pronoun)
         
         if len(candidate_mentions) == 0:
             return None
@@ -938,9 +939,11 @@ class CoreferenceTable():
                     pronoun_span._.gender = get_pronoun_gender(pronoun_span)
                     pronoun_span._.is_plural = is_plural_pronoun(pronoun_span)
                     names.append(pronoun_span)
+
+        filtered = [name for name in names if not is_pronoun(name)]
         
         # A sorted list of all names and pronouns in the document
-        self.mentions = sorted(names, key=lambda x: x.start)
+        self.mentions = sorted(filtered, key=lambda x: x.start)
     
     
     def add_entry(self, mention, root_mention):
@@ -1035,6 +1038,12 @@ class CoreferenceTable():
 
             # Ignore candidates which are in content spans
             if utils.are_overlapping_span_lists([candidate_mention], contents):
+                logger.debug("Overlapping span: %s", candidate_mention)
+                continue
+
+            # Ignore gender mismatches
+            if pronoun._.gender not in {"unknown", "neutral"} and candidate_mention._.gender != pronoun._.gender:
+                logger.debug("Bad gender match: %s", candidate_mention)
                 continue
                 
             # Add source span, if it contains the candidate
@@ -1128,7 +1137,7 @@ class CoreferenceTable():
         name_labels = [0] * len(doc)
         
         # Add all persons and organisations in the quote sources 
-        if quotes is not None:       
+        if quotes is not None:     
             for quote in quotes:
                 for source in quote.sources:
                     if utils.is_person(source) or utils.is_organisation(source):
@@ -1136,7 +1145,7 @@ class CoreferenceTable():
                         
                         for i in range(source.start, source.end):
                             name_labels[i] = 1
-                
+
         # Add all persons and organisations in the document's entities, if they are outside existing names and content labels
         for entity in doc.ents:
             if entity.label_ in ("PERSON", "ORG"):
@@ -1149,15 +1158,25 @@ class CoreferenceTable():
                 else:           
                     names.append(entity)
         
+
+        # A sorted list of all names and pronouns in the document
+        names = sorted(names, key=lambda x: x.start)
+
         # Determine plurality and gender
-        for name in names:
+        for idx, name in enumerate(names):
             if utils.is_person(name):
                 name._.gender = get_gender(name, forenames_table)
-                name._.is_plural = False
-            
+                name._.is_plural = False           
             elif name.label_ == "ORG":
                 name._.gender = "neutral"
                 name._.is_plural = True
+
+            lower_name = utils.strip_possessive(name.text.lower())
+            for name_idx in range(0, idx):
+                lower_match = names[name_idx].text.lower()
+                if lower_name in lower_match:
+                    name._.gender = names[name_idx]._.gender
+                    break
 
         return names
     

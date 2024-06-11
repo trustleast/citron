@@ -3,7 +3,7 @@
 #
 # License: Apache-2.0
 
-import json
+import logging
 
 from citron.utils import get_parser
 from citron.citron import Citron
@@ -12,11 +12,12 @@ from citron.logger import logger
 from typing_extensions import Annotated
 from fastapi import FastAPI, Form, Response, status
 
+#logger.setLevel(logging.DEBUG)
+
 nlp = get_parser(use_gpu = True, use_small = False)
 citron = Citron("./models/en_2021-11-15", nlp=nlp)
 
 app = FastAPI()
-
 @app.post("/quotes")
 async def entities(text: Annotated[str, Form()], response: Response):
     # raw_data = await request.body()

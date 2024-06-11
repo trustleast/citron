@@ -781,3 +781,25 @@ def get_index_of_max(values):
             index_of_max = i
             
     return index_of_max, max_value
+
+APOSTRAPHES = {"’", "‘", "'"}
+def strip_possessive(text):
+    """
+    Strip possessive apostrophes from a string.
+    
+    Args:
+        text: A string.
+    
+    Returns:
+        A string.
+    """
+    if len(text) < 3:
+        return text
+    
+    if text[-1] == 's' and text[-2] in APOSTRAPHES:
+        return text[:-2]
+    
+    if text[-1] in APOSTRAPHES and text[-2] == 's':
+        return text[:-1]
+    
+    return text
