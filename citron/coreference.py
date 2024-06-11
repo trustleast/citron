@@ -53,9 +53,196 @@ PREFIX_GENDERS = {
     "Prof": "unknown",
     "Professor": "unknown",
     "Rep": "unknown",
-    "Sen": "unknown"
+    "Sen": "unknown",
+    "Official": "unknown",
+    "Advocate general": "unknown",
+    "Aide-de-camp": "unknown",
+    "Alderman": "unknown",
+    "Ambassador": "unknown",
+    "Appraiser": "unknown",
+    "Attaché": "unknown",
+    "Bureaucrat": "unknown",
+    "Cabinet secretary": "unknown",
+    "Certified Public Manager": "unknown",
+    "Chief Agricultural Negotiator": "unknown",
+    "Chief experimental officer": "unknown",
+    "Chief Heat Officer": "unknown",
+    "Chief medical officer": "unknown",
+    "Chief Medical Officers": "unknown",
+    "Chief Nursing Officer": "unknown",
+    "Chief of District": "unknown",
+    "Chief of local state administration": "unknown",
+    "Chief of protocol": "unknown",
+    "Chief Scientific Officer": "unknown",
+    "Chief Veterinary Officer": "unknown",
+    "City attorney": "unknown",
+    "City manager": "unknown",
+    "City Remembrancer": "unknown",
+    "Municipal clerk": "unknown",
+    "Commissioner of Official Languages": "unknown",
+    "Commissioner of the Republic": "unknown",
+    "Coordinating secretary": "unknown",
+    "Council architect": "unknown",
+    "Council ranger": "unknown",
+    "County executive": "unknown",
+    "County administrator": "unknown",
+    "County surveyor": "unknown",
+    "Courtier": "unknown",
+    "Cultural attaché": "unknown",
+    "Department secretary": "unknown",
+    "Deputy mayor": "unknown",
+    "Deputy prime minister": "unknown",
+    "Director of communications": "unknown",
+    "Director of the U.S. Government Publishing Office": "unknown",
+    "Drain commissioner": "unknown",
+    "Diak": "unknown",
+    "Fence viewer": "unknown",
+    "First Civil Service Commissioner": "unknown",
+    "General Register Office": "unknown",
+    "Gold commissioner": "unknown",
+    "Government Agent": "unknown",
+    "Governor": "unknown",
+    "Gov": "unknown",
+    "Guardian minister": "unknown",
+    "Hardship post": "unknown",
+    "High Bailiff": "unknown",
+    "Historiographer Royal": "unknown",
+    "Hofmeister": "unknown",
+    "Intelligence officer": "unknown",
+    "Interim leader": "unknown",
+    "Keeper of the Privy Seal of Scotland": "unknown",
+    "Keeper of the Seals": "unknown",
+    "King of Arms": "unknown",
+    "Language commissioner": "unknown",
+    "LGBT liaison officer": "unknown",
+    "List of state chief justices": "unknown",
+    "List of state legislature speakers": "unknown",
+    "List of undersecretary positions": "unknown",
+    "Marshal of the Sejm": "unknown",
+    "Mayor": "unknown",
+    "Member of congress": "unknown",
+    "Minister": "unknown",
+    "Min": "unknown",
+    "Ministerial Diary Secretary": "unknown",
+    "Municipal commissioner": "unknown",
+    "Obersthofmeister": "unknown",
+    "Official Secretary to the Governor": "unknown",
+    "Ombudsman": "unknown",
+    "Parliamentary State Secretary": "unknown",
+    "Permanent representative": "unknown",
+    "Permanent secretary": "unknown",
+    "Permanent Secretary": "unknown",
+    "Podyachy": "unknown",
+    "Portreeve": "unknown",
+    "Postal worker": "unknown",
+    "Postmaster": "unknown",
+    "Prefect": "unknown",
+    "President of the Council of Ministers": "unknown",
+    "President of the Municipal Chamber": "unknown",
+    "Press secretary": "unknown",
+    "Prosecutor": "unknown",
+    "Pursuivant": "unknown",
+    "Reading Clerk": "unknown",
+    "Receiver general": "unknown",
+    "Recorder of deeds": "unknown",
+    "Royal secretary": "unknown",
+    "Secretary": "unknown",
+    "Sec": "unknown",
+    "Secretary of State": "unknown",
+    "Secretary of the Government": "unknown",
+    "Sheriff": "unknown",
+    "Sovereign": "unknown",
+    "Speaker": "unknown",
+    "Spokesman": "unknown",
+    "Spokeswoman": "female",
+    "Special Adviser to the President": "unknown",
+    "State architect": "unknown",
+    "State constitutional officer": "unknown",
+    "Sub-divisional magistrate": "unknown",
+    "Tax collector": "unknown",
+    "Supervisor": "unknown",
+    "Treasurer": "unknown",
+    "Undersecretary": "unknown",
+    "Wazira": "unknown",
+    "Whip": "unknown",
+    "President": "unknown",
+    "Director": "unknown",
+    "CEO": "unknown",
+    "Chief Executive Officer": "unknown",
+    "Chief": "unknown",
+    "Attorney": "unknown",
+    "Attorney General": "unknown",
+    "District Attorney": "unknown",
+    "Doctor": "unknown",
+    "Dr": "unknown",
+    "General": "unknown",
+    "Gen": "unknown",
+    "Senator": "unknown",
+    "Sen": "unknown",
+    "Leader": "unknown",
+    "Representative": "unknown",
+    "Rep": "unknown",
+    "Director-General": "unknown",
+    "Chair": "unknown",
+    "Chairman": "unknown",
+    "Chairwoman": "unknown",
+    "Administrator": "unknown",
+    "Adm": "unknown",
+    "Chancellor": "unknown",
+    "Manager": "unknown",
+    "Judge": "unknown",
+    "Commissioner": "unknown",
+    "Superintendent": "unknown",
+    "Secretary-General": "unknown",
+    "Cardinal": "unknown",
+    "Undersheriff": "unknown",
+    "President-Elect": "unknown",
+    "Lt": "unknown",
+    "Lieutenant": "unknown",
+    "Pastor": "unknown",
+    "Historian": "unknown",
+    "Coroner": "unknown",
+    "Sgt": "unknown",
+    "Sergeant": "unknown",
+    "Priest": "unknown",
+    "Justice": "unknown",
+    "Justices": "unknown",
+    "Politician": "unknown",
+    "Mayor-Elect": "unknown",
+    "Founder": "unknown",
+    "Adviser": "unknown",
+    "Advisor": "unknown",
+    "Biologist": "unknown",
+    "QB": "unknown",
+    "Democrat": "unknown",
+    "Republican": "unknown",
+    "Bishop": "unknown",
+    "Principal": "unknown",
+    "Filmmaker": "unknown",
+    "Organizer": "unknown",
+    "Archbishop": "unknown",
+    "Col": "unknown",
+    "Colonel": "unknown",
+    "Historian": "unknown",
+    "co-CEO": "unknown",
+    "Journalist": "unknown",
+    "Sheikh": "unknown",
+    "Officer": "unknown",
+    "Fire Marshall": "unknown",
+    "U.S. Marshal": "unknown",
+    "Midshipman": "unknown",
+    "Comic": "unknown",
+    "Coroner": "unknown",
+    "Sister": "female",
+    "Brother": "male",
+    "Psychotherapist": "unknown",
+    "Wrangler": "unknown",
+    "Archaeologist": "unknown",
+    "Rescuer": "unknown",
+    "Trustee": "unknown",
+    "Adm": "unknown",
+    "Admiral": "unknown",
 }
-
 
 def get_gender(name, forenames_table, coreference_table=None):
     """
@@ -83,17 +270,17 @@ def get_gender(name, forenames_table, coreference_table=None):
             if coreference is not None:
                 name = coreference
         
+        # References to earlier full names in the article are left as "unknown"
+        # They are resolved to earlier matches.
         if len(name) > 1:
-            if is_prefixed_name(name):
-                gender = get_prefix_gender(name)
-                
+            prefix, rest_of_name = split_on_longest_prefix(name)
+            if prefix is not None:
+                gender = get_prefix_gender(prefix)
                 if gender != "unknown":
                     return gender
-                
-                if len(name) > 2:
-                    return forenames_table.get_forename_gender(name[1].text)
             
-            return forenames_table.get_forename_gender(name[0].text)
+            first_name = rest_of_name.split(" ")[0]
+            return forenames_table.get_forename_gender(first_name)
         
         else:
             return "unknown"
@@ -132,39 +319,33 @@ def get_pronoun_gender(pronoun):
     else:
         return "unknown"
 
-
-def is_prefixed_name(name):
+def split_on_longest_prefix(name):
     """
-    Test whether a name has a recognisable prefix.
-    
+    Splits the input on the longest prefix and returns the prefix and name
+
     Args:
         name: a spaCy Span object.
-    
-    Returns:
-        A boolean value.
     """
-    
-    prefix = name[0].text
-    
-    if prefix.endswith("."):
-        prefix = prefix[: -1]
-    
-    return prefix in PREFIX_GENDERS
+    text = name.text.lower()
+    for key in PREFIX_GENDERS.keys():
+        if text.startswith(key.lower()):
+            prefix_removed = text[len(key):].strip()
+            if prefix_removed.startswith("."):
+                prefix_removed = prefix_removed[1:]
+            return key, prefix_removed.strip()
 
+    return None, text
 
-def get_prefix_gender(name):
+def get_prefix_gender(prefix):
     """
     Get the gender associated with a prefix.
     
     Args:
-        name: a spaCy Span object.
+        prefix: a string representing the prefix.
     
     Returns:
         "male", "female", or "unknown"
     """
-    
-    prefix = name[0].text
-    
     if prefix.endswith("."):
         prefix = prefix[: -1]
     
@@ -338,7 +519,6 @@ class CoreferenceResolver():
             contents: A list of spaCy Span objects.
             content_labels: A list containing an IOB label for each token in the document.
         """
-        
         coreference_table = CoreferenceTable(doc, CoreferenceResolver.forenames_table, quotes, content_labels)
         
         for quote in quotes:
@@ -356,16 +536,14 @@ class CoreferenceResolver():
             sources: A list of spaCy Span objects.
             contents: A list of spaCy Span objects.
         """
-        
         coreferences = []
-        
         for source in quote.sources:
             coreference = self._resolve_coreference_chain(doc, coreference_table, source, sources, contents)
             
             if coreference is not None and coreference.text != source.text:
                 coreferences.append(coreference)
             
-            quote.coreferences = coreferences
+        quote.coreferences = coreferences
     
     
     def _resolve_coreference_chain(self, doc, coreference_table, span, sources, contents):
@@ -379,7 +557,6 @@ class CoreferenceResolver():
             sources: A list of spaCy Span objects.
             contents: A list of spaCy Span objects.
         """
-        
         chain = []
         coreference = self._resolve_coreference(doc, coreference_table, span, chain, sources, contents)
         
@@ -405,8 +582,7 @@ class CoreferenceResolver():
         Returns:
             A spaCy Span object.
             
-        """
-        
+        """   
         coreference = coreference_table.resolve(span)
         
         if coreference is not None:                
@@ -849,31 +1025,29 @@ class CoreferenceTable():
             A list of spaCy Span objects.
             
         """
-        
         preceding_mentions = []
-        
         for i in range(len(self.mentions) - 1, -1, -1):
             candidate_mention = self.mentions[i]
             
-            if candidate_mention.end <= pronoun.start:                                            
-                # Ignore candidates which are in content spans
-                if utils.are_overlapping_span_lists([candidate_mention], contents):
-                    continue
+            # Ignore mentions that occur after the pronoun
+            if candidate_mention.end > pronoun.start:
+                continue
+
+            # Ignore candidates which are in content spans
+            if utils.are_overlapping_span_lists([candidate_mention], contents):
+                continue
                 
-                # Add source span, if it contains the candidate
-                for source in sources:
-                    if utils.are_overlapping_spans(candidate_mention, source):
-                        preceding_mentions.append(source)
-                        break
-                
-                else:
-                    preceding_mentions.append(candidate_mention)
-                
-                if len(preceding_mentions) >= closest_n:
+            # Add source span, if it contains the candidate
+            for source in sources:
+                if utils.are_overlapping_spans(candidate_mention, source):
+                    preceding_mentions.append(source)
                     break
-        
+            else:
+                preceding_mentions.append(candidate_mention)
+                
+            if len(preceding_mentions) >= closest_n:
+                break
         return preceding_mentions
-    
     
     def _build_name_table(self, names):
         """
@@ -893,7 +1067,8 @@ class CoreferenceTable():
         for name in names:
             longest_match = None
             
-            if name[-1].ent_type_ == "PERSON" or is_prefixed_name(name) or is_proper_noun(name):
+            prefix, _ = split_on_longest_prefix(name)
+            if name[-1].ent_type_ == "PERSON" or prefix is not None or is_proper_noun(name):
                 # Use earliest, longer instance with matching surname
                 for candidate_name in names:             
                     if self.is_longer_with_matching_surname(candidate_name, name):
@@ -983,7 +1158,7 @@ class CoreferenceTable():
             elif name.label_ == "ORG":
                 name._.gender = "neutral"
                 name._.is_plural = True
-        
+
         return names
     
     

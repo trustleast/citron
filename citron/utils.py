@@ -432,7 +432,7 @@ def are_overlapping_span_lists(spans1, spans2):
     
     for span1 in spans1:
         for span2 in spans2:
-            if span1.start <= span2.end and span1.end > span2.start:
+            if span1.start < span2.end and span1.end > span2.start:
                 return True
     
     return False
