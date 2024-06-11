@@ -621,6 +621,8 @@ class CoreferenceResolver():
             candidate_features = self._get_features(coreference_table, mention, mention_index, pronoun)
             features.append(candidate_features)
 
+        logger.debug("Features: %s", features)
+
         test_vectors = self._model["vectorizer"].transform(features)
         predicted_probabilities = self._model["classifier"].predict_proba(test_vectors)
         predicted_index, probability = utils.get_index_of_max(predicted_probabilities)
