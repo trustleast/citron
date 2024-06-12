@@ -530,7 +530,7 @@ class CoreferenceResolver():
         coreferences = []
         logger.debug("Resolve quote: %s: %s", quote.contents, quote.sources)
         for source in quote.sources:
-            coreference = self._resolve_coreference_chain(doc, coreference_table, source, sources, contents)
+            coreference = self._resolve_coreference_chain(doc, coreference_table, quote, source, sources, contents)
             
             if coreference is not None and coreference.text != source.text:
                 coreferences.append(coreference)
@@ -538,19 +538,20 @@ class CoreferenceResolver():
         quote.coreferences = coreferences
     
     
-    def _resolve_coreference_chain(self, doc, coreference_table, span, sources, contents):
+    def _resolve_coreference_chain(self, doc, coreference_table, quote, span, sources, contents):
         """
         Find the primary coreference of a span by recursively resolving a coreference chain.
         
         Args:
             doc: A spaCy Doc object.
             coreference_table: A citron.coreference.CoreferenceTable object.
+            quote: A citron.data.Quote object (the quote containing the span).
             span: A spaCy Span object (the span to resolve).
             sources: A list of spaCy Span objects.
             contents: A list of spaCy Span objects.
         """
         chain = []
-        coreference = self._resolve_coreference(doc, coreference_table, span, chain, sources, contents)
+        coreference = self._resolve_coreference(doc, coreference_table, quote, span, chain, sources, contents)
         
         for mention in chain:
             if not coreference_table.contains(mention):
@@ -559,13 +560,14 @@ class CoreferenceResolver():
         return coreference
     
     
-    def _resolve_coreference(self, doc, coreference_table, span, chain, sources, contents):
+    def _resolve_coreference(self, doc, coreference_table, quote, span, chain, sources, contents):
         """
         Find the coreference for a span.
         
         Args:
             doc: A spaCy Doc object.
             coreference_table: A citron.coreference.CoreferenceTable object.
+            quote: A citron.data.Quote object (the quote containing the span).
             span: A spaCy Span object (the span to resolve).
             chain: A list spaCy Span objects.
             sources: A list of spaCy Span objects.
@@ -582,24 +584,25 @@ class CoreferenceResolver():
         
         elif is_pronoun(span):
             chain.append(span)
-            coreference = self._resolve_pronoun(coreference_table, span, sources, contents)
+            coreference = self._resolve_pronoun(coreference_table, quote, span, sources, contents)
             
             if coreference is None:
                 return span      
             else:
-                return self._resolve_coreference(doc, coreference_table, coreference, chain, sources, contents)
+                return self._resolve_coreference(doc, coreference_table, quote, coreference, chain, sources, contents)
         
         else:
             return span
     
     
-    def _resolve_pronoun(self, coreference_table, pronoun, sources, contents):
+    def _resolve_pronoun(self, coreference_table, quote, pronoun, sources, contents):
         """
         Find the coreference for a pronoun.
         
         Args:
             doc: A spaCy Doc object.
             coreference_table: A citron.coreference.CoreferenceTable object.
+            quote: A citron.data.Quote object (the quote referencing the pronoun).
             pronoun: A spaCy Span object (the pronoun to resolve)
             sources: A list of spaCy Span objects.
             contents: A list of spaCy Span objects.
@@ -610,6 +613,7 @@ class CoreferenceResolver():
         """
         
         candidate_mentions = coreference_table.get_closest_preceding_mentions(pronoun, self.PREVIOUS_N, sources, contents)
+        candidate_mentions = [mention for mention in candidate_mentions if not any([mention.text in str(q) for q in quote.contents])]
         logger.debug("Candidate mentions: %s, %s", candidate_mentions, pronoun)
         
         if len(candidate_mentions) == 0:
@@ -1174,7 +1178,7 @@ class CoreferenceTable():
                 if lower_name in lower_match:
                     name._.gender = names[name_idx]._.gender
                     break
-
+                
         return names
     
     
