@@ -117,42 +117,42 @@ class Citron():
         Returns:
             A list of citron.data.Quote objects.
         """
-        
-        quotes = []
-        sentence_section_labels =  utils.get_sentence_section_labels(doc)
-        
         # First find quote-cues.
         cue_spans, cue_labels = self.cue_classifier.predict_cues_and_labels(doc)
         
-        if len(cue_spans) > 0:
-            # Identify source and content spans.
-            content_spans, content_labels = self.content_classifier.predict_contents_and_labels(doc, cue_labels)
-            source_spans = self.source_classifier.predict_sources_and_labels(doc, cue_labels, content_labels)[0]
+        if len(cue_spans) == 0:
+            return []
+        
+        # Identify source and content spans.
+        content_spans, content_labels = self.content_classifier.predict_contents_and_labels(doc, cue_labels)
+        source_spans = self.source_classifier.predict_sources_and_labels(doc, cue_labels, content_labels)[0]
+        
+        if len(content_spans) == 0:
+            return []
+        
+        if len(source_spans) == 0:
+            return []
+        
+        # Identify the quote-cue associated with each source and content span.
+        cue_to_contents_map = self.content_resolver.resolve_contents(content_spans, cue_spans)
+        sentence_section_labels =  utils.get_sentence_section_labels(doc)
+        cue_to_sources_map  = self.source_resolver.resolve_sources(source_spans, cue_spans, sentence_section_labels)
+        
+        # Join source and content spans which share the same quote-cue.
+        quotes = []
+        for cue in cue_spans:
+            key = (cue.start, cue.end)
             
-            if len(content_spans) == 0:
-                return []
-            
-            if len(source_spans) == 0:
-                return []
-            
-            # Identify the quote-cue associated with each source and content span.
-            cue_to_contents_map = self.content_resolver.resolve_contents(content_spans, cue_spans)
-            cue_to_sources_map  = self.source_resolver.resolve_sources(source_spans, cue_spans, sentence_section_labels)
-            
-            # Join source and content spans which share the same quote-cue.
-            for cue in cue_spans:
-                key = (cue.start, cue.end)
+            if key in cue_to_contents_map and key in cue_to_sources_map:
+                contents = cue_to_contents_map[key]
+                source = cue_to_sources_map[key]
+                confidence = source._.probability
                 
-                if key in cue_to_contents_map and key in cue_to_sources_map:
-                    contents = cue_to_contents_map[key]
-                    source = cue_to_sources_map[key]
-                    confidence = source._.probability
-                    
-                    for content in contents:
-                        confidence = confidence * content._.probability
-                    
-                    quote = Quote(cue, [source], contents, confidence=confidence)
-                    quotes.append(quote)
+                for content in contents:
+                    confidence = confidence * content._.probability
+                
+                quote = Quote(cue, [source], contents, confidence=confidence)
+                quotes.append(quote)
         
         if resolve_coreferences and len(quotes) > 0:
             self.coreference_resolver.resolve_document(doc, quotes, source_spans, content_spans, content_labels)

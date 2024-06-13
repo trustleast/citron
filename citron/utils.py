@@ -803,3 +803,70 @@ def strip_possessive(text):
         return text[:-1]
     
     return text
+
+def get_quoted_text(text):
+    """
+    Extract quoted text from a string.
+
+    Args:
+        text: A string.
+
+    Returns:
+        A list of quoted strings.
+    """
+    total_quotes = text.count('"') + text.count('“') + text.count('”')
+    if total_quotes == 0 or total_quotes % 2 != 0:
+        return []
+
+    open = False
+    result = []
+    cur_quote = ""
+    for r in text:
+        if (open and r == '"') or r == '”':
+            if cur_quote:
+                result.append(cur_quote)
+                cur_quote = ""
+            open = False
+            continue
+        if r == '"' or r == '“':
+            open = True
+            continue
+
+        if open:
+            cur_quote += r
+
+    return result
+
+def get_quoted_text_indices(span):
+    """
+    Extract quoted text indices from a string.
+
+    Args:
+        span: A spacy.Span object.
+
+    Returns:
+        A list of tuples containing the start and end indices of quoted strings.
+    """
+    text = span.text
+    
+    total_quotes = text.count('"') + text.count('“') + text.count('”')
+    if total_quotes == 0 or total_quotes % 2 != 0:
+        return []
+
+    open = False
+    result = []
+    cur_quote = None
+    for token in span:
+        r = token.text
+        if (open and r == '"') or r == '”':
+            if cur_quote is not None:
+                result.append((cur_quote.i, token.i+1))
+                cur_quote = None
+            open = False
+            continue
+        if r == '"' or r == '“':
+            open = True
+            cur_quote = token
+            continue
+
+    return result

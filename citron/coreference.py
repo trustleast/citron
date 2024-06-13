@@ -258,10 +258,6 @@ def get_gender(name, forenames_table, coreference_table=None):
     """ 
     if is_pronoun(name):
         return get_pronoun_gender(name)
-    
-    elif utils.is_organisation(name):
-        return "neutral"
-    
     elif utils.is_person(name):
         if coreference_table is not None:  
             coreference = coreference_table.resolve(name)
@@ -280,9 +276,10 @@ def get_gender(name, forenames_table, coreference_table=None):
             
             first_name = rest_of_name.split(" ")[0]
             return forenames_table.get_forename_gender(first_name)
-        
         else:
             return "unknown"
+    elif utils.is_organisation(name):
+        return "neutral"
     else:
         return "unknown"
 
@@ -612,8 +609,7 @@ class CoreferenceResolver():
             
         """
         
-        candidate_mentions = coreference_table.get_closest_preceding_mentions(pronoun, self.PREVIOUS_N, sources, contents)
-        candidate_mentions = [mention for mention in candidate_mentions if not any([mention.text in str(q) for q in quote.contents])]
+        candidate_mentions = coreference_table.get_closest_preceding_mentions(pronoun, self.PREVIOUS_N, sources, contents, quote=quote)
         logger.debug("Candidate mentions: %s, %s", candidate_mentions, pronoun)
         
         if len(candidate_mentions) == 0:
@@ -918,8 +914,7 @@ class CoreferenceTable():
             forenames_table: A citron.coreference.ForenamesTable object.
             quotes: A list of citron.data.Quote objects.
             content_labels: A list containing an IOB label for each token in the document.
-        """
-        
+        """     
         self.doc = doc
         
         # Get all names in the document
@@ -1011,7 +1006,7 @@ class CoreferenceTable():
             return None
     
     
-    def get_closest_preceding_mentions(self, pronoun, closest_n, sources, contents):
+    def get_closest_preceding_mentions(self, pronoun, closest_n, sources, contents, quote=None):
         """
         Get the closest preceding mentions for a pronoun.        
         
@@ -1020,6 +1015,7 @@ class CoreferenceTable():
             closest_n: The maximum number of mentions to return (int)
             sources: A list of spaCy Span objects.
             contents: A list of spaCy Span objects.
+            quote: A citron.data.Quote object, or None.
             
         Returns:
             A list of spaCy Span objects.
@@ -1039,12 +1035,17 @@ class CoreferenceTable():
                 logger.debug("Overlapping span: %s", candidate_mention)
                 continue
 
+            # Ignore candidates which are in the quote (a pronoun reference would likely not have their name in the quote)
+            if quote is not None and mention_in_quote(candidate_mention, quote):
+                logger.debug("Skipping mention for being in quote: %s", candidate_mention)
+                continue
+
             # If candidate is a proper noun, and gender is unknown, include it
             # Ignore gender mismatches
             mention_matches_gender = candidate_mention._.gender == pronoun._.gender
             mention_is_noun_or_proper = is_proper_noun(candidate_mention) or is_noun(candidate_mention)
             if (pronoun_is_gendered and not mention_matches_gender) and not (mention_is_noun_or_proper and candidate_mention._.gender == "unknown"):
-                logger.debug("Bad gender match: %s", candidate_mention)
+                logger.debug("Bad gender match: %s %s - %s", candidate_mention, candidate_mention._.gender, pronoun._.gender)
                 continue
                 
             # Add source span, if it contains the candidate
@@ -1137,15 +1138,21 @@ class CoreferenceTable():
         names = []
         name_labels = [0] * len(doc)
         
+        # TODO: Determine if we actually need this, we should trust the spacy model
         # Add all persons and organisations in the quote sources 
-        if quotes is not None:     
-            for quote in quotes:
-                for source in quote.sources:
-                    if utils.is_person(source) or utils.is_organisation(source):
-                        names.append(source)
-                        
-                        for i in range(source.start, source.end):
-                            name_labels[i] = 1
+        # if quotes is not None:     
+        #     for quote in quotes:
+        #         for source in quote.sources:
+        #             print("Source", source.start, source.end, source)
+        #             if utils.is_person(source) or utils.is_organisation(source):
+        #                 names.append(source)
+        #                 for i in range(source.start, source.end):
+        #                     name_labels[i] = 1
+
+        for sentence in doc.sents:
+            for start, stop in utils.get_quoted_text_indices(sentence):
+                for i in range(start, stop):
+                    name_labels[i] = 1
 
         # Add all persons and organisations in the document's entities, if they are outside existing names and content labels
         for entity in doc.ents:
@@ -1303,3 +1310,30 @@ class ForenamesTable():
                 
                 if len(forename) > 0:
                     forenames.add(forename)
+
+def mention_in_quote(mention, quote):
+    """
+    Check whether a mention is in a quote.
+    
+    Args:
+        mention: A spaCy Span object.
+        quote: A citron.data.Quote object.
+    
+    Returns:
+        A boolean value.
+    """
+    for q in quote.contents:
+        quote_text = str(q)
+        quotes_to_check = utils.get_quoted_text(quote_text)
+
+        if len(quotes_to_check) == 0:
+            quotes_to_check = [quote_text]
+
+        for quote_text in quotes_to_check:
+            if mention.text in quote_text:
+                return True
+            for token in mention:
+                if (token.ent_type_ == "PERSON" or token.ent_type_ == "ORG") and token.text in quote_text:
+                    return True
+        
+    return False

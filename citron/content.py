@@ -65,11 +65,28 @@ class ContentClassifier():
                 content_spans: A list of spaCy Span objects.
                 content_labels: A list containing an IOB label for each token in the document.
         """
-        
         features = self._get_features_and_labels(doc, cue_labels)[0]
         predicted_content_labels = self._tagger.tag(features)
         content_labels = utils.conform_labels(predicted_content_labels)
+        sawCloseQuote = False
+        openQuote = False
+        for idx, content_label in enumerate(content_labels):
+            token = doc[idx]
+            if sawCloseQuote and ((token.text in {".", ",", "!", "?", ":"} or content_label == "O") or content_label == "B"):
+                sawCloseQuote = False
+            elif openQuote and (token.text == "”" or token.text == "\""):
+                sawCloseQuote = True
+                openQuote = False
+            elif (content_label == "B" or content_label == "I") and (token.text == "“" or token.text == "\""):
+                openQuote = True
+            elif sawCloseQuote and content_label == "I":
+                content_labels[idx] = "O"
+
+        content_labels = utils.conform_labels(content_labels)
+
         content_spans = utils.get_spans(doc, content_labels)
+
+
         return content_spans, content_labels
     
     
