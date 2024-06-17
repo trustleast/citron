@@ -23,235 +23,227 @@ from .data import DataSource
 from . import utils
 from . import metrics
 from .logger import logger
+from . import gender
 
 PREFIX_GENDERS = {
-    "Mr": "male",
-    "Sir": "male",
-    "Lord": "male",
-    "Duke": "male",
-    "Marquess": "male",
-    "Count": "male",
-    "Viscount": "male",
-    "Baron": "male",
-    "Prince": "male",
-    "King": "male",
-    "Mrs": "female",
-    "Miss": "female",
-    "Ms": "female",
-    "Lady": "female",
-    "Duchess": "female",
-    "Marchioness": "female",
-    "Countess": "female",
-    "Viscountess": "male",
-    "Baroness": "female",
-    "Princess": "female",
-    "Queen": "female",
-    "Dr": "unknown",
-    "Doctor": "unknown",
-    "Judge": "unknown",
-    "Justice": "unknown",
-    "Prof": "unknown",
-    "Professor": "unknown",
-    "Rep": "unknown",
-    "Sen": "unknown",
-    "Official": "unknown",
-    "Advocate general": "unknown",
-    "Aide-de-camp": "unknown",
-    "Alderman": "unknown",
-    "Ambassador": "unknown",
-    "Appraiser": "unknown",
-    "Attaché": "unknown",
-    "Bureaucrat": "unknown",
-    "Cabinet secretary": "unknown",
-    "Certified Public Manager": "unknown",
-    "Chief Agricultural Negotiator": "unknown",
-    "Chief experimental officer": "unknown",
-    "Chief Heat Officer": "unknown",
-    "Chief medical officer": "unknown",
-    "Chief Medical Officers": "unknown",
-    "Chief Nursing Officer": "unknown",
-    "Chief of District": "unknown",
-    "Chief of local state administration": "unknown",
-    "Chief of protocol": "unknown",
-    "Chief Scientific Officer": "unknown",
-    "Chief Veterinary Officer": "unknown",
-    "City attorney": "unknown",
-    "City manager": "unknown",
-    "City Remembrancer": "unknown",
-    "Municipal clerk": "unknown",
-    "Commissioner of Official Languages": "unknown",
-    "Commissioner of the Republic": "unknown",
-    "Coordinating secretary": "unknown",
-    "Council architect": "unknown",
-    "Council ranger": "unknown",
-    "County executive": "unknown",
-    "County administrator": "unknown",
-    "County surveyor": "unknown",
-    "Courtier": "unknown",
-    "Cultural attaché": "unknown",
-    "Department secretary": "unknown",
-    "Deputy mayor": "unknown",
-    "Deputy prime minister": "unknown",
-    "Director of communications": "unknown",
-    "Director of the U.S. Government Publishing Office": "unknown",
-    "Drain commissioner": "unknown",
-    "Diak": "unknown",
-    "Fence viewer": "unknown",
-    "First Civil Service Commissioner": "unknown",
-    "General Register Office": "unknown",
-    "Gold commissioner": "unknown",
-    "Government Agent": "unknown",
-    "Governor": "unknown",
-    "Gov": "unknown",
-    "Guardian minister": "unknown",
-    "Hardship post": "unknown",
-    "High Bailiff": "unknown",
-    "Historiographer Royal": "unknown",
-    "Hofmeister": "unknown",
-    "Intelligence officer": "unknown",
-    "Interim leader": "unknown",
-    "Keeper of the Privy Seal of Scotland": "unknown",
-    "Keeper of the Seals": "unknown",
-    "King of Arms": "unknown",
-    "Language commissioner": "unknown",
-    "LGBT liaison officer": "unknown",
-    "List of state chief justices": "unknown",
-    "List of state legislature speakers": "unknown",
-    "List of undersecretary positions": "unknown",
-    "Marshal of the Sejm": "unknown",
-    "Mayor": "unknown",
-    "Member of congress": "unknown",
-    "Minister": "unknown",
-    "Min": "unknown",
-    "Ministerial Diary Secretary": "unknown",
-    "Municipal commissioner": "unknown",
-    "Obersthofmeister": "unknown",
-    "Official Secretary to the Governor": "unknown",
-    "Ombudsman": "unknown",
-    "Parliamentary State Secretary": "unknown",
-    "Permanent representative": "unknown",
-    "Permanent secretary": "unknown",
-    "Permanent Secretary": "unknown",
-    "Podyachy": "unknown",
-    "Portreeve": "unknown",
-    "Postal worker": "unknown",
-    "Postmaster": "unknown",
-    "Prefect": "unknown",
-    "President of the Council of Ministers": "unknown",
-    "President of the Municipal Chamber": "unknown",
-    "Press secretary": "unknown",
-    "Prosecutor": "unknown",
-    "Pursuivant": "unknown",
-    "Reading Clerk": "unknown",
-    "Receiver general": "unknown",
-    "Recorder of deeds": "unknown",
-    "Royal secretary": "unknown",
-    "Secretary": "unknown",
-    "Sec": "unknown",
-    "Secretary of State": "unknown",
-    "Secretary of the Government": "unknown",
-    "Sheriff": "unknown",
-    "Sovereign": "unknown",
-    "Speaker": "unknown",
-    "Spokesman": "unknown",
-    "Spokeswoman": "female",
-    "Special Adviser to the President": "unknown",
-    "State architect": "unknown",
-    "State constitutional officer": "unknown",
-    "Sub-divisional magistrate": "unknown",
-    "Tax collector": "unknown",
-    "Supervisor": "unknown",
-    "Treasurer": "unknown",
-    "Undersecretary": "unknown",
-    "Wazira": "unknown",
-    "Whip": "unknown",
-    "President": "unknown",
-    "Director": "unknown",
-    "CEO": "unknown",
-    "Chief Executive Officer": "unknown",
-    "Chief": "unknown",
-    "Attorney": "unknown",
-    "Attorney General": "unknown",
-    "District Attorney": "unknown",
-    "Doctor": "unknown",
-    "Dr": "unknown",
-    "General": "unknown",
-    "Gen": "unknown",
-    "Senator": "unknown",
-    "Sen": "unknown",
-    "Leader": "unknown",
-    "Representative": "unknown",
-    "Rep": "unknown",
-    "Director-General": "unknown",
-    "Chair": "unknown",
-    "Chairman": "unknown",
-    "Chairwoman": "unknown",
-    "Administrator": "unknown",
-    "Adm": "unknown",
-    "Chancellor": "unknown",
-    "Manager": "unknown",
-    "Judge": "unknown",
-    "Commissioner": "unknown",
-    "Superintendent": "unknown",
-    "Secretary-General": "unknown",
-    "Cardinal": "unknown",
-    "Undersheriff": "unknown",
-    "President-Elect": "unknown",
-    "Lt": "unknown",
-    "Lieutenant": "unknown",
-    "Pastor": "unknown",
-    "Historian": "unknown",
-    "Coroner": "unknown",
-    "Sgt": "unknown",
-    "Sergeant": "unknown",
-    "Priest": "unknown",
-    "Justice": "unknown",
-    "Justices": "unknown",
-    "Politician": "unknown",
-    "Mayor-Elect": "unknown",
-    "Founder": "unknown",
-    "Adviser": "unknown",
-    "Advisor": "unknown",
-    "Biologist": "unknown",
-    "QB": "unknown",
-    "Democrat": "unknown",
-    "Republican": "unknown",
-    "Bishop": "unknown",
-    "Principal": "unknown",
-    "Filmmaker": "unknown",
-    "Organizer": "unknown",
-    "Archbishop": "unknown",
-    "Col": "unknown",
-    "Colonel": "unknown",
-    "Historian": "unknown",
-    "co-CEO": "unknown",
-    "Journalist": "unknown",
-    "Sheikh": "unknown",
-    "Officer": "unknown",
-    "Fire Marshall": "unknown",
-    "U.S. Marshal": "unknown",
-    "Midshipman": "unknown",
-    "Comic": "unknown",
-    "Coroner": "unknown",
-    "Sister": "female",
-    "Brother": "male",
-    "Psychotherapist": "unknown",
-    "Wrangler": "unknown",
-    "Archaeologist": "unknown",
-    "Rescuer": "unknown",
-    "Trustee": "unknown",
-    "Adm": "unknown",
-    "Admiral": "unknown",
+    "mr": "male",
+    "sir": "male",
+    "lord": "male",
+    "duke": "male",
+    "marquess": "male",
+    "count": "male",
+    "viscount": "male",
+    "baron": "male",
+    "prince": "male",
+    "king": "male",
+    "mrs": "female",
+    "miss": "female",
+    "ms": "female",
+    "lady": "female",
+    "duchess": "female",
+    "marchioness": "female",
+    "countess": "female",
+    "viscountess": "male",
+    "baroness": "female",
+    "princess": "female",
+    "queen": "female",
+    "dr": "unknown",
+    "doctor": "unknown",
+    "judge": "unknown",
+    "justice": "unknown",
+    "prof": "unknown",
+    "professor": "unknown",
+    "rep": "unknown",
+    "sen": "unknown",
+    "official": "unknown",
+    "advocate general": "unknown",
+    "aide-de-camp": "unknown",
+    "alderman": "unknown",
+    "ambassador": "unknown",
+    "appraiser": "unknown",
+    "attaché": "unknown",
+    "bureaucrat": "unknown",
+    "cabinet secretary": "unknown",
+    "chief agricultural negotiator": "unknown",
+    "chief experimental officer": "unknown",
+    "chief heat officer": "unknown",
+    "chief medical officer": "unknown",
+    "chief nursing officer": "unknown",
+    "chief of district": "unknown",
+    "chief of local state administration": "unknown",
+    "chief of protocol": "unknown",
+    "chief scientific officer": "unknown",
+    "chief veterinary officer": "unknown",
+    "city attorney": "unknown",
+    "manager": "unknown",
+    "managers": "unknown",
+    "city remembrancer": "unknown",
+    "municipal clerk": "unknown",
+    "commissioner of official languages": "unknown",
+    "commissioner of the republic": "unknown",
+    "coordinating secretary": "unknown",
+    "council architect": "unknown",
+    "council ranger": "unknown",
+    "county executive": "unknown",
+    "county administrator": "unknown",
+    "county surveyor": "unknown",
+    "courtier": "unknown",
+    "cultural attaché": "unknown",
+    "department secretary": "unknown",
+    "deputy mayor": "unknown",
+    "deputy prime minister": "unknown",
+    "director of communications": "unknown",
+    "director of the u.s. government publishing office": "unknown",
+    "drain commissioner": "unknown",
+    "diak": "unknown",
+    "fence viewer": "unknown",
+    "first civil service commissioner": "unknown",
+    "general register office": "unknown",
+    "gold commissioner": "unknown",
+    "government agent": "unknown",
+    "governor": "unknown",
+    "gov": "unknown",
+    "guardian minister": "unknown",
+    "hardship post": "unknown",
+    "high bailiff": "unknown",
+    "historiographer Royal": "unknown",
+    "hofmeister": "unknown",
+    "intelligence officer": "unknown",
+    "interim leader": "unknown",
+    "keeper of the privy seal of scotland": "unknown",
+    "keeper of the seals": "unknown",
+    "king of arms": "unknown",
+    "language commissioner": "unknown",
+    "lgbt liaison officer": "unknown",
+    "marshal of the sejm": "unknown",
+    "mayor": "unknown",
+    "member of congress": "unknown",
+    "minister": "unknown",
+    "min": "unknown",
+    "ministerial diary secretary": "unknown",
+    "municipal commissioner": "unknown",
+    "obersthofmeister": "unknown",
+    "official secretary to the governor": "unknown",
+    "ombudsman": "unknown",
+    "parliamentary state secretary": "unknown",
+    "permanent representative": "unknown",
+    "permanent secretary": "unknown",
+    "portreeve": "unknown",
+    "postal worker": "unknown",
+    "postmaster": "unknown",
+    "prefect": "unknown",
+    "president of the council of ministers": "unknown",
+    "president of the municipal chamber": "unknown",
+    "press secretary": "unknown",
+    "prosecutor": "unknown",
+    "pursuivant": "unknown",
+    "reading clerk": "unknown",
+    "receiver general": "unknown",
+    "recorder of deeds": "unknown",
+    "royal secretary": "unknown",
+    "secretary": "unknown",
+    "sec": "unknown",
+    "secretary of state": "unknown",
+    "secretary of the government": "unknown",
+    "sheriff": "unknown",
+    "sovereign": "unknown",
+    "speaker": "unknown",
+    "spokesman": "male",
+    "spokeswoman": "female",
+    "special adviser to the president": "unknown",
+    "state architect": "unknown",
+    "state constitutional officer": "unknown",
+    "sub-divisional magistrate": "unknown",
+    "tax collector": "unknown",
+    "supervisor": "unknown",
+    "treasurer": "unknown",
+    "undersecretary": "unknown",
+    "wazira": "unknown",
+    "whip": "unknown",
+    "president": "unknown",
+    "director": "unknown",
+    "ceo": "unknown",
+    "chief executive officer": "unknown",
+    "chief": "unknown",
+    "attorney": "unknown",
+    "attorney general": "unknown",
+    "district attorney": "unknown",
+    "doctor": "unknown",
+    "dr": "unknown",
+    "general": "unknown",
+    "gen": "unknown",
+    "senator": "unknown",
+    "sen": "unknown",
+    "leader": "unknown",
+    "representative": "unknown",
+    "rep": "unknown",
+    "director-general": "unknown",
+    "chair": "unknown",
+    "chairman": "unknown",
+    "chairwoman": "unknown",
+    "administrator": "unknown",
+    "adm": "unknown",
+    "chancellor": "unknown",
+    "judge": "unknown",
+    "commissioner": "unknown",
+    "superintendent": "unknown",
+    "secretary-general": "unknown",
+    "cardinal": "unknown",
+    "undersheriff": "unknown",
+    "president-elect": "unknown",
+    "lt": "unknown",
+    "lieutenant": "unknown",
+    "pastor": "unknown",
+    "historian": "unknown",
+    "coroner": "unknown",
+    "sgt": "unknown",
+    "sergeant": "unknown",
+    "priest": "unknown",
+    "justice": "unknown",
+    "politician": "unknown",
+    "mayor-elect": "unknown",
+    "founder": "unknown",
+    "adviser": "unknown",
+    "advisor": "unknown",
+    "biologist": "unknown",
+    "qb": "unknown",
+    "democrat": "unknown",
+    "republican": "unknown",
+    "bishop": "unknown",
+    "principal": "unknown",
+    "filmmaker": "unknown",
+    "organizer": "unknown",
+    "archbishop": "unknown",
+    "col": "unknown",
+    "colonel": "unknown",
+    "historian": "unknown",
+    "co-ceo": "unknown",
+    "journalist": "unknown",
+    "sheikh": "unknown",
+    "officer": "unknown",
+    "fire marshall": "unknown",
+    "u.s. marshal": "unknown",
+    "midshipman": "unknown",
+    "comic": "unknown",
+    "coroner": "unknown",
+    "sister": "female",
+    "brother": "male",
+    "psychotherapist": "unknown",
+    "wrangler": "unknown",
+    "archaeologist": "unknown",
+    "rescuer": "unknown",
+    "trustee": "unknown",
+    "adm": "unknown",
+    "admiral": "unknown",
 }
 
-def get_gender(name, forenames_table, coreference_table=None):
+def get_gender(name, gender_resolver):
     """
     Get the gender of a name.
     
     Args:
         name: a spaCy Span object.
-        forenames_table: A citron.coreference.ForenamesTable object.
-        coreference_table: A citron.coreference.CoreferenceTable object, or None.
+        gender_resolver: A citron.gender.ForenameGenderClassifier object.
     
     Returns:
         "male", "female", "neutral" or "unknown".
@@ -259,12 +251,6 @@ def get_gender(name, forenames_table, coreference_table=None):
     if is_pronoun(name):
         return get_pronoun_gender(name)
     elif utils.is_person(name):
-        if coreference_table is not None:  
-            coreference = coreference_table.resolve(name)
-            
-            if coreference is not None:
-                name = coreference
-        
         # References to earlier full names in the article are left as "unknown"
         # They are resolved to earlier matches.
         if len(name) > 1:
@@ -275,7 +261,7 @@ def get_gender(name, forenames_table, coreference_table=None):
                     return gender
             
             first_name = rest_of_name.split(" ")[0]
-            return forenames_table.get_forename_gender(first_name)
+            return gender_resolver.get_forename_gender(first_name)
         else:
             return "unknown"
     elif utils.is_organisation(name):
@@ -315,13 +301,30 @@ def split_on_longest_prefix(name):
     """
     lowered = name.text.lower()
     for key in PREFIX_GENDERS.keys():
-        if lowered.startswith(key.lower()):
+        if lowered.startswith(key):
             prefix_removed = name.text[len(key):].strip()
             if prefix_removed.startswith("."):
                 prefix_removed = prefix_removed[1:]
             return key, prefix_removed.strip()
 
     return None, name.text
+
+def split_on_rightmost_prefix(name):
+    """
+    Splits the input on the rightmost prefix and returns the prefix and name
+
+    Args:
+        name: a spaCy Span object.
+    """
+    for end_idx in range(len(name), 0, -1):
+        for start_idx in range(0, end_idx):
+            span = name[start_idx:end_idx]
+            lower_chunk = span.text.lower()
+            if lower_chunk in PREFIX_GENDERS:
+                prefix = name[:end_idx]
+                suffix = name[end_idx:]
+                return prefix, suffix
+    return [], name
 
 def get_prefix_gender(prefix):
     """
@@ -335,12 +338,12 @@ def get_prefix_gender(prefix):
     """
     if prefix.endswith("."):
         prefix = prefix[: -1]
+
+    lowered = prefix.lower()
     
-    if prefix in PREFIX_GENDERS:
-        return PREFIX_GENDERS[prefix]
-    
-    else:
-        return "unknown"
+    if lowered in PREFIX_GENDERS:
+        return PREFIX_GENDERS[lowered]
+    return "unknown"
 
 
 def is_proper_noun(span):
@@ -490,35 +493,34 @@ class CoreferenceResolver():
         
         with open(filename, "rb") as infile:
             self._model = pickle.load(infile)
-        
-        CoreferenceResolver.forenames_table = ForenamesTable()
     
-    
-    def resolve_document(self, doc, quotes, sources, contents, content_labels):
+    def resolve_document(self, doc, gender_resolver, quotes, sources, contents, content_labels):
         """
         Find the primary coreferences of the quote sources in a document.
         
         Args:
             doc: A spaCy Doc object.
+            gender_resolver: A citron.gender.ForenameGenderClassifier object.
             quotes: A list of spaCy Span objects.
             sources: A list of spaCy Span objects.
             contents: A list of spaCy Span objects.
             content_labels: A list containing an IOB label for each token in the document.
         """
-        coreference_table = CoreferenceTable(doc, CoreferenceResolver.forenames_table, quotes, content_labels)
+        coreference_table = CoreferenceTable(doc, gender_resolver, quotes, content_labels)
 
         logger.debug("Resolve document: %s", contents)
         
         for quote in quotes:
-            self._resolve_quote(doc, coreference_table, quote, sources, contents)
+            self._resolve_quote(doc, gender_resolver, coreference_table, quote, sources, contents)
     
     
-    def _resolve_quote(self, doc, coreference_table, quote, sources, contents):
+    def _resolve_quote(self, doc, gender_resolver, coreference_table, quote, sources, contents):
         """
         Find the primary coreferences of the sources of a quote.
         
         Args:
             doc: A spaCy Doc object.
+            gender_resolver: A citron.gender.ForenameGenderClassifier object.
             coreference_table: A citron.coreference.CoreferenceTable object.
             quote: A citron.Data.Quote object (the quote to resolve).
             sources: A list of spaCy Span objects.
@@ -527,7 +529,7 @@ class CoreferenceResolver():
         coreferences = []
         logger.debug("Resolve quote: %s: %s", quote.contents, quote.sources)
         for source in quote.sources:
-            coreference = self._resolve_coreference_chain(doc, coreference_table, quote, source, sources, contents)
+            coreference = self._resolve_coreference_chain(doc, gender_resolver, coreference_table, quote, source, sources, contents)
             
             if coreference is not None and coreference.text != source.text:
                 coreferences.append(coreference)
@@ -535,12 +537,13 @@ class CoreferenceResolver():
         quote.coreferences = coreferences
     
     
-    def _resolve_coreference_chain(self, doc, coreference_table, quote, span, sources, contents):
+    def _resolve_coreference_chain(self, doc, gender_resolver, coreference_table, quote, span, sources, contents):
         """
         Find the primary coreference of a span by recursively resolving a coreference chain.
         
         Args:
             doc: A spaCy Doc object.
+            gender_resolver: A citron.gender.ForenameGenderClassifier object.
             coreference_table: A citron.coreference.CoreferenceTable object.
             quote: A citron.data.Quote object (the quote containing the span).
             span: A spaCy Span object (the span to resolve).
@@ -548,7 +551,7 @@ class CoreferenceResolver():
             contents: A list of spaCy Span objects.
         """
         chain = []
-        coreference = self._resolve_coreference(doc, coreference_table, quote, span, chain, sources, contents)
+        coreference = self._resolve_coreference(doc, gender_resolver, coreference_table, quote, span, chain, sources, contents)
         
         for mention in chain:
             if not coreference_table.contains(mention):
@@ -557,12 +560,13 @@ class CoreferenceResolver():
         return coreference
     
     
-    def _resolve_coreference(self, doc, coreference_table, quote, span, chain, sources, contents):
+    def _resolve_coreference(self, doc, gender_resolver, coreference_table, quote, span, chain, sources, contents):
         """
         Find the coreference for a span.
         
         Args:
             doc: A spaCy Doc object.
+            gender_resolver: A citron.gender.ForenameGenderClassifier object.
             coreference_table: A citron.coreference.CoreferenceTable object.
             quote: A citron.data.Quote object (the quote containing the span).
             span: A spaCy Span object (the span to resolve).
@@ -575,29 +579,30 @@ class CoreferenceResolver():
             
         """   
         coreference = coreference_table.resolve(span)
+        logger.debug("Resolve span: %s: %s", span, coreference)
         
         if coreference is not None:                
             return coreference
         
         elif is_pronoun(span):
             chain.append(span)
-            coreference = self._resolve_pronoun(coreference_table, quote, span, sources, contents)
+            coreference = self._resolve_pronoun(gender_resolver, coreference_table, quote, span, sources, contents)
             
             if coreference is None:
                 return span      
             else:
-                return self._resolve_coreference(doc, coreference_table, quote, coreference, chain, sources, contents)
+                return self._resolve_coreference(doc, gender_resolver, coreference_table, quote, coreference, chain, sources, contents)
         
         else:
             return span
     
     
-    def _resolve_pronoun(self, coreference_table, quote, pronoun, sources, contents):
+    def _resolve_pronoun(self, gender_resolver, coreference_table, quote, pronoun, sources, contents):
         """
         Find the coreference for a pronoun.
         
         Args:
-            doc: A spaCy Doc object.
+            gender_resolver: A citron.gender.ForenameGenderClassifier object.
             coreference_table: A citron.coreference.CoreferenceTable object.
             quote: A citron.data.Quote object (the quote referencing the pronoun).
             pronoun: A spaCy Span object (the pronoun to resolve)
@@ -618,7 +623,7 @@ class CoreferenceResolver():
         features = []
         
         for mention_index, mention in enumerate(candidate_mentions):
-            candidate_features = self._get_features(coreference_table, mention, mention_index, pronoun)
+            candidate_features = self._get_features(gender_resolver, coreference_table, mention, mention_index, pronoun)
             features.append(candidate_features)
 
         logger.debug("Features: %s", features)
@@ -632,10 +637,11 @@ class CoreferenceResolver():
         
         predicted_coreference = candidate_mentions[predicted_index]
         predicted_coreference._.probability = probability
+        logger.debug("Predicted coreference: %s, %s", predicted_coreference, probability)
         return predicted_coreference
     
     
-    def evaluate(self, nlp, test_path):
+    def evaluate(self, gender_resolver, nlp, test_path):
         """
         Evaluate the Coreference Classifier by measuring the ability to identify 
         the correct coreference group for pronoun sources in each document.
@@ -666,7 +672,7 @@ class CoreferenceResolver():
             contents  = utils.get_contents(quotes)
             content_labels = utils.get_iob_labels_for_spans(doc, contents)
             
-            self.resolve_document(doc, quotes, sources, contents, content_labels)
+            self.resolve_document(doc, gender_resolver, quotes, sources, contents, content_labels)
             document_count += 1
             
             for quote in quotes:
@@ -703,7 +709,7 @@ class CoreferenceResolver():
     
     
     @staticmethod
-    def build_model(nlp, train_path, model_path):
+    def build_model(nlp, gender_resolver, train_path, model_path):
         """
         Build and save a Coreference Resolver model.
         
@@ -718,8 +724,7 @@ class CoreferenceResolver():
         if not os.path.exists(model_path):
             os.makedirs(model_path)
         
-        CoreferenceResolver.forenames_table = ForenamesTable()
-        features, labels = CoreferenceResolver._get_features_and_labels(nlp, train_path)
+        features, labels = CoreferenceResolver._get_features_and_labels(nlp, gender_resolver, train_path)
         
         logger.info("Vectorising training data")
         vectorizer = DictVectorizer()
@@ -733,7 +738,7 @@ class CoreferenceResolver():
         model = {}
         model["classifier"] = classifier
         model["vectorizer"] = vectorizer
-        model["forenamesTable"] = CoreferenceResolver.forenames_table
+        model["forenamesTable"] = gender_resolver
         model["timestamp"] = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
         
         filename = os.path.join(model_path, CoreferenceResolver.MODEL_FILENAME)
@@ -748,7 +753,7 @@ class CoreferenceResolver():
     
     
     @staticmethod
-    def _get_features_and_labels(nlp, input_path):
+    def _get_features_and_labels(nlp, gender_resolver, input_path):
         """
         Get features and labels for all pronouns in the coreference groups of each document in a corpus.
         
@@ -775,7 +780,7 @@ class CoreferenceResolver():
             sources   = utils.get_sources(quotes)
             contents  = utils.get_contents(quotes)
             content_labels = utils.get_iob_labels_for_spans(doc, contents)
-            coreference_table = CoreferenceTable(doc, CoreferenceResolver.forenames_table, quotes, content_labels)
+            coreference_table = CoreferenceTable(doc, gender_resolver, quotes, content_labels)
             
             for coref_group in coref_groups:
                 for span in coref_group:
@@ -790,7 +795,7 @@ class CoreferenceResolver():
                         candidate_mentions = coreference_table.get_closest_preceding_mentions(pronoun, 5, sources, contents)
                         
                         for mention_index, mention in enumerate(candidate_mentions):            
-                            candidate_features = CoreferenceResolver._get_features(coreference_table, mention, mention_index, pronoun)
+                            candidate_features = CoreferenceResolver._get_features(gender_resolver, coreference_table, mention, mention_index, pronoun)
                             
                             if candidate_features is not None:                
                                 features.append(candidate_features)
@@ -802,12 +807,12 @@ class CoreferenceResolver():
     
     
     @staticmethod
-    def _get_features(coreference_table, mention, mention_index, pronoun):
+    def _get_features(gender_resolver, coreference_table, mention, mention_index, pronoun):
         """
         Get the features of a mention (a name or pronoun) in relation to the specified pronoun.
         
         Args:
-            doc: A spaCy Doc object.
+            gender_resolver: A citron.gender.ForenameGenderClassifier object.
             coreference_table: A CoreferenceTable object.
             mention: A spaCy Span object.
             mention_index: An index (int) representing the distance (in mentions) from the pronoun.
@@ -830,7 +835,7 @@ class CoreferenceResolver():
         pronoun_gender = get_pronoun_gender(pronoun)
         
         if mention._.gender is None:
-            mention._.gender = get_gender(mention, CoreferenceResolver.forenames_table, coreference_table)
+            mention._.gender = get_gender(mention, gender_resolver)
         
         mention_gender = mention._.gender
         
@@ -905,20 +910,21 @@ class CoreferenceTable():
     with names and then entries are added for pronouns as these are resolved.
     """
     
-    def __init__(self, doc, forenames_table, quotes=None, content_labels=None):
+    def __init__(self, doc, gender_resolver, quotes=None, content_labels=None):
         """
         Constructor.
         
         Args:
             doc: A spaCy Doc object.
-            forenames_table: A citron.coreference.ForenamesTable object.
+            gender_resolver: A citron.gender.ForenameGenderClassifier object.
             quotes: A list of citron.data.Quote objects.
             content_labels: A list containing an IOB label for each token in the document.
         """     
         self.doc = doc
         
         # Get all names in the document
-        names = self.get_names(doc, forenames_table, quotes, content_labels)
+        names = self.get_names(doc, gender_resolver, quotes, content_labels)
+        logger.debug("Names: %s", names)
         
         # Dict which maps mentions to their primary (longest, earliest) coreference
         self.coreference_map = self._build_name_table(names)
@@ -933,6 +939,7 @@ class CoreferenceTable():
                     names.append(pronoun_span)
 
         filtered = [name for name in names if not is_pronoun(name)]
+        logger.debug("Filtered: %s", filtered)
         
         # A sorted list of all names and pronouns in the document
         self.mentions = sorted(filtered, key=lambda x: x.start)
@@ -961,7 +968,6 @@ class CoreferenceTable():
         
         Returns:
             True if present, otherwise False.
-            
         """
         
         mention_span_tuple = (mention.start, mention.end)
@@ -997,6 +1003,7 @@ class CoreferenceTable():
         if end is None:
             end = mention.end
         
+        logger.debug("Resolve mention: %s (%d-%d): (%d-%d)", mention, mention.start, mention.end, start, end)
         entity_tuple = (start, end)
         
         if entity_tuple in self.coreference_map:
@@ -1025,7 +1032,8 @@ class CoreferenceTable():
         pronoun_is_gendered = pronoun._.gender not in {"unknown", "neutral"}
         for i in range(len(self.mentions) - 1, -1, -1):
             candidate_mention = self.mentions[i]
-            
+            # logger.debug("Candidate mention: %s (%d-%d) (%d-%d)", candidate_mention, candidate_mention.start, candidate_mention.end, pronoun.start, pronoun.end)
+
             # Ignore mentions that occur after the pronoun
             if candidate_mention.end > pronoun.start:
                 continue
@@ -1075,14 +1083,15 @@ class CoreferenceTable():
         
         name_table = {}
         
-        for name in names:
+        for idx, name in enumerate(names):
             longest_match = None
             
             prefix, _ = split_on_longest_prefix(name)
             if name[-1].ent_type_ == "PERSON" or prefix is not None or is_proper_noun(name):
                 # Use earliest, longer instance with matching surname
-                for candidate_name in names:             
-                    if self.is_longer_with_matching_surname(candidate_name, name):
+                for candidate_idx in range(0, idx):             
+                    candidate_name = names[candidate_idx]
+                    if name.text in candidate_name.text:
                         if longest_match is None or candidate_name.text > longest_match.text:
                             longest_match = candidate_name
                             break
@@ -1094,7 +1103,7 @@ class CoreferenceTable():
                             if longest_match is None or candidate_name.text > longest_match.text:
                                 longest_match = candidate_name
                                 break
-            
+
             if longest_match is None:
                 # Use earliest instance of matching name
                 for candidate_name in names:
@@ -1120,13 +1129,13 @@ class CoreferenceTable():
         return name_table
     
     
-    def get_names(self, doc, forenames_table, quotes=None, content_labels=None):
+    def get_names(self, doc, gender_resolver, quotes=None, content_labels=None):
         """
         Get a list of all the name spans within the document.
         
         Args:
             doc: a spaCy Doc object.
-            forenames_table: A citron.coreference.ForenamesTable object.
+            gender_resolver: A citron.gender.ForenameGenderClassifier object.
             quotes: A list of citron.data.Quote objects.
             content_labels: A list containing an IOB label for each token in the document.
         
@@ -1173,14 +1182,14 @@ class CoreferenceTable():
         # Determine plurality and gender
         for idx, name in enumerate(names):
             if utils.is_person(name):
-                name._.gender = get_gender(name, forenames_table)
+                name._.gender = get_gender(name, gender_resolver)
                 name._.is_plural = False           
             elif name.label_ == "ORG":
                 name._.gender = "neutral"
                 name._.is_plural = True
 
             lower_name = utils.strip_possessive(name.text.lower())
-            for name_idx in range(0, idx):
+            for name_idx in range(idx - 1, 0, -1):
                 lower_match = names[name_idx].text.lower()
                 if lower_name in lower_match:
                     name._.gender = names[name_idx]._.gender
@@ -1189,24 +1198,24 @@ class CoreferenceTable():
         return names
     
     
-    def is_longer_with_matching_surname(self, candidate_name, name):
-        """
-        Test whether the candidate name is a longer version of the name with
-        a matching surname.
+    # def is_longer_with_matching_surname(self, candidate_name, name):
+    #     """
+    #     Test whether the candidate name is a longer version of the name with
+    #     a matching surname.
         
-        Args:
-            candidate_name: a spaCy Span object.
-            name: a spaCy Span object.
+    #     Args:
+    #         candidate_name: a spaCy Span object.
+    #         name: a spaCy Span object.
         
-        Returns:
-            True, if the name is a longer match, otherwise False.
-        """
+    #     Returns:
+    #         True, if the name is a longer match, otherwise False.
+    #     """
         
-        if len(candidate_name.text) > len(name.text):
-            if name[-1].text == candidate_name[-1].text:
-                return True
+    #     if len(candidate_name.text) > len(name.text):
+    #         if name[-1].text == candidate_name[-1].text:
+    #             return True
         
-        return False
+    #     return False
     
     
     def is_longer_with_matching_forenames(self, candidate_name, name):
@@ -1230,6 +1239,32 @@ class CoreferenceTable():
             return True        
         return False
 
+def mention_in_quote(mention, quote):
+    """
+    Check whether a mention is in a quote.
+    
+    Args:
+        mention: A spaCy Span object.
+        quote: A citron.data.Quote object.
+    
+    Returns:
+        A boolean value.
+    """
+    for q in quote.contents:
+        quote_text = str(q)
+        quotes_to_check = utils.get_quoted_text(quote_text)
+
+        if len(quotes_to_check) == 0:
+            quotes_to_check = [quote_text]
+
+        for quote_text in quotes_to_check:
+            if mention.text in quote_text:
+                return True
+            for token in mention:
+                if (token.ent_type_ == "PERSON" or token.ent_type_ == "ORG") and token.text in quote_text:
+                    return True
+        
+    return False
 
 class ForenamesTable():
     """
@@ -1310,30 +1345,3 @@ class ForenamesTable():
                 
                 if len(forename) > 0:
                     forenames.add(forename)
-
-def mention_in_quote(mention, quote):
-    """
-    Check whether a mention is in a quote.
-    
-    Args:
-        mention: A spaCy Span object.
-        quote: A citron.data.Quote object.
-    
-    Returns:
-        A boolean value.
-    """
-    for q in quote.contents:
-        quote_text = str(q)
-        quotes_to_check = utils.get_quoted_text(quote_text)
-
-        if len(quotes_to_check) == 0:
-            quotes_to_check = [quote_text]
-
-        for quote_text in quotes_to_check:
-            if mention.text in quote_text:
-                return True
-            for token in mention:
-                if (token.ent_type_ == "PERSON" or token.ent_type_ == "ORG") and token.text in quote_text:
-                    return True
-        
-    return False

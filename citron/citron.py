@@ -14,7 +14,8 @@ from .content import ContentClassifier
 from .content import ContentResolver
 from .source import SourceResolver
 from .source import SourceClassifier
-from .coreference import CoreferenceResolver
+from .coreference import CoreferenceResolver, split_on_rightmost_prefix
+from .gender import ForenameGenderClassifier
 from . import utils
 from . import metrics
 from .logger import logger
@@ -47,6 +48,7 @@ class Citron():
         self.content_resolver = ContentResolver(model_path)
         self.source_resolver = SourceResolver(model_path)
         self.coreference_resolver = CoreferenceResolver(model_path)
+        self.gender_resolver = ForenameGenderClassifier()
 
         self.source = {
             "application": APPLICATION_NAME,
@@ -146,16 +148,23 @@ class Citron():
             if key in cue_to_contents_map and key in cue_to_sources_map:
                 contents = cue_to_contents_map[key]
                 source = cue_to_sources_map[key]
+                _, suffix = split_on_rightmost_prefix(source)
+                
                 confidence = source._.probability
                 
+                has_direct_quote = False
                 for content in contents:
+                    has_direct_quote = has_direct_quote or utils.has_quoted_text(content)
                     confidence = confidence * content._.probability
+                if not has_direct_quote:
+                    logger.debug("Skipping quote without direct speech: %s", contents)
+                    continue
                 
-                quote = Quote(cue, [source], contents, confidence=confidence)
+                quote = Quote(cue, [suffix], contents, confidence=confidence)
                 quotes.append(quote)
         
         if resolve_coreferences and len(quotes) > 0:
-            self.coreference_resolver.resolve_document(doc, quotes, source_spans, content_spans, content_labels)
+            self.coreference_resolver.resolve_document(doc, self.gender_resolver, quotes, source_spans, content_spans, content_labels)
         
         return quotes
     

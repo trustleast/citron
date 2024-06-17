@@ -12,6 +12,7 @@ import logging
 
 from citron.coreference import CoreferenceResolver
 from citron import utils
+from citron import gender
 from citron.logger import logger
 
 
@@ -47,13 +48,15 @@ def main():
         logger.setLevel(logging.DEBUG)
     
     nlp = utils.get_parser()
+
+    gender_resolver = gender.ForenameGenderClassifier()
     
     if args.train_path:
         CoreferenceResolver.build_model(nlp, args.train_path, args.model_path)
     
     if args.test_path:
         coreference_resolver = CoreferenceResolver(args.model_path)
-        coreference_resolver.evaluate(nlp, args.test_path)
+        coreference_resolver.evaluate(nlp, gender_resolver, args.test_path)
     
     if not (args.train_path or args.test_path):
         logger.error("Must specify train_path and/or test_path")

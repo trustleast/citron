@@ -870,3 +870,15 @@ def get_quoted_text_indices(span):
             continue
 
     return result
+
+def has_quoted_text(span):
+    """
+    Test whether a span contains quoted text.
+
+    Args:
+        span: A spacy.Span object.
+
+    Returns:
+        A boolean value.
+    """
+    return len(get_quoted_text_indices(span)) > 0
