@@ -135,10 +135,12 @@ class Citron():
         if len(source_spans) == 0:
             return []
         
+        cleaned_sources = [split_on_rightmost_prefix(source)[1] for source in source_spans]
+        
         # Identify the quote-cue associated with each source and content span.
         cue_to_contents_map = self.content_resolver.resolve_contents(content_spans, cue_spans)
         sentence_section_labels =  utils.get_sentence_section_labels(doc)
-        cue_to_sources_map  = self.source_resolver.resolve_sources(source_spans, cue_spans, sentence_section_labels)
+        cue_to_sources_map  = self.source_resolver.resolve_sources(cleaned_sources, cue_spans, sentence_section_labels)
         
         # Join source and content spans which share the same quote-cue.
         quotes = []
@@ -164,7 +166,7 @@ class Citron():
                 quotes.append(quote)
         
         if resolve_coreferences and len(quotes) > 0:
-            self.coreference_resolver.resolve_document(doc, self.gender_resolver, quotes, source_spans, content_spans, content_labels)
+            self.coreference_resolver.resolve_document(doc, self.gender_resolver, quotes, cleaned_sources, content_spans, content_labels)
         
         return quotes
     

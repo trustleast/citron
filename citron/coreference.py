@@ -56,7 +56,6 @@ PREFIX_GENDERS = {
     "rep": "unknown",
     "sen": "unknown",
     "official": "unknown",
-    "advocate general": "unknown",
     "aide-de-camp": "unknown",
     "alderman": "unknown",
     "ambassador": "unknown",
@@ -65,15 +64,9 @@ PREFIX_GENDERS = {
     "bureaucrat": "unknown",
     "cabinet secretary": "unknown",
     "chief agricultural negotiator": "unknown",
-    "chief experimental officer": "unknown",
-    "chief heat officer": "unknown",
-    "chief medical officer": "unknown",
-    "chief nursing officer": "unknown",
     "chief of district": "unknown",
     "chief of local state administration": "unknown",
     "chief of protocol": "unknown",
-    "chief scientific officer": "unknown",
-    "chief veterinary officer": "unknown",
     "city attorney": "unknown",
     "manager": "unknown",
     "managers": "unknown",
@@ -108,13 +101,11 @@ PREFIX_GENDERS = {
     "high bailiff": "unknown",
     "historiographer Royal": "unknown",
     "hofmeister": "unknown",
-    "intelligence officer": "unknown",
     "interim leader": "unknown",
     "keeper of the privy seal of scotland": "unknown",
     "keeper of the seals": "unknown",
     "king of arms": "unknown",
     "language commissioner": "unknown",
-    "lgbt liaison officer": "unknown",
     "marshal of the sejm": "unknown",
     "mayor": "unknown",
     "member of congress": "unknown",
@@ -150,9 +141,8 @@ PREFIX_GENDERS = {
     "speaker": "unknown",
     "spokesman": "male",
     "spokeswoman": "female",
-    "special adviser to the president": "unknown",
+    "spokesperson": "unknown",
     "state architect": "unknown",
-    "state constitutional officer": "unknown",
     "sub-divisional magistrate": "unknown",
     "tax collector": "unknown",
     "supervisor": "unknown",
@@ -163,10 +153,8 @@ PREFIX_GENDERS = {
     "president": "unknown",
     "director": "unknown",
     "ceo": "unknown",
-    "chief executive officer": "unknown",
     "chief": "unknown",
     "attorney": "unknown",
-    "attorney general": "unknown",
     "district attorney": "unknown",
     "doctor": "unknown",
     "dr": "unknown",
@@ -938,7 +926,7 @@ class CoreferenceTable():
                     pronoun_span._.is_plural = is_plural_pronoun(pronoun_span)
                     names.append(pronoun_span)
 
-        filtered = [name for name in names if not is_pronoun(name)]
+        filtered = [split_on_rightmost_prefix(name)[1] for name in names if not is_pronoun(name)]
         logger.debug("Filtered: %s", filtered)
         
         # A sorted list of all names and pronouns in the document
